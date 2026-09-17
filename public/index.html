@@ -1,1 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeSphere | Intelligent Emergency & Safety Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center p-4 sm:p-6 font-sans">
 
+    <!-- Container -->
+    <div class="max-w-xl w-full bg-slate-900/90 border border-slate-800/80 p-6 sm:p-8 rounded-3xl shadow-2xl backdrop-blur-md">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400">SafeSphere</h1>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">Advanced Women's Safety & Emergency Ecosystem</p>
+        </div>
+        
+        <!-- PANIC SOS BUTTON -->
+        <div class="mb-8 text-center bg-rose-950/20 border border-rose-900/40 p-6 rounded-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-rose-600/10 rounded-full blur-2xl"></div>
+            <button onclick="triggerEmergencySOS()" class="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black py-5 rounded-2xl shadow-xl shadow-rose-600/30 transition text-xl tracking-wider cursor-pointer flex items-center justify-center gap-3 transform active:scale-95">
+                <span class="text-2xl animate-pulse">🚨</span> PANIC SOS BROADCAST
+            </button>
+            <p id="sosStatus" class="text-xs text-rose-300/80 mt-3 font-medium">Sends continuous GPS coordinates & logs alert to backend.</p>
+        </div>
+
+        <!-- Utility Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+            <button onclick="triggerFakeCall()" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 p-4 rounded-2xl text-center transition cursor-pointer group">
+                <div class="text-2xl mb-1 group-hover:scale-110 transition">📞</div>
+                <div class="text-xs font-bold text-slate-200">Fake Call</div>
+                <div class="text-[10px] text-slate-400">Simulate incoming</div>
+            </button>
+            <button onclick="shareLiveLocation()" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 p-4 rounded-2xl text-center transition cursor-pointer group">
+                <div class="text-2xl mb-1 group-hover:scale-110 transition">📍</div>
+                <div class="text-xs font-bold text-slate-200">Copy GPS Link</div>
+                <div class="text-[10px] text-slate-400">Clipboard ready</div>
+            </button>
+            <button onclick="triggerSirens()" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 p-4 rounded-2xl text-center transition cursor-pointer group">
+                <div class="text-2xl mb-1 group-hover:scale-110 transition">🔊</div>
+                <div class="text-xs font-bold text-slate-200">Loud Alarm</div>
+                <div class="text-[10px] text-slate-400">Deterrent siren</div>
+            </button>
+        </div>
+
+        <!-- Trusted Contacts Section (Backend Synced) -->
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Trusted Emergency Contacts</h2>
+                <span class="text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">Backend Connected</span>
+            </div>
+            <div class="flex gap-2 mb-3">
+                <input type="text" id="contactName" placeholder="Name (e.g., Mom)" class="w-1/2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500">
+                <input type="text" id="contactPhone" placeholder="Phone Number" class="w-1/2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500">
+                <button onclick="addContact()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-xl text-xs transition cursor-pointer">Save</button>
+            </div>
+            <ul id="contactList" class="space-y-2 max-h-36 overflow-y-auto pr-1 text-xs">
+                <!-- Dynamically loaded from backend -->
+            </ul>
+        </div>
+
+        <!-- Quick Helplines -->
+        <div class="border-t border-slate-800/80 pt-4">
+            <h2 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">National Emergency Hotlines (India)</h2>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <a href="tel:1091" class="bg-slate-950/40 border border-slate-800 p-2.5 rounded-xl flex justify-between items-center hover:bg-slate-800 transition">
+                    <span>Women Helpline</span>
+                    <span class="text-rose-400 font-bold">1091</span>
+                </a>
+                <a href="tel:112" class="bg-slate-950/40 border border-slate-800 p-2.5 rounded-xl flex justify-between items-center hover:bg-slate-800 transition">
+                    <span>Emergency SOS</span>
+                    <span class="text-amber-400 font-bold">112</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fake Call Fullscreen Overlay -->
+    <div id="fakeCallScreen" class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center hidden z-50 p-6">
+        <div class="text-center animate-pulse mb-16">
+            <p class="text-slate-400 text-xs uppercase tracking-widest mb-3">Incoming Secure Call</p>
+            <h2 class="text-5xl font-extrabold text-white mb-2">Dad 🛡️</h2>
+            <p class="text-emerald-400 text-sm font-mono">Secure Line Connecting...</p>
+        </div>
+        <div class="flex gap-10">
+            <button onclick="endFakeCall()" class="bg-rose-600 hover:bg-rose-500 text-white w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-xl cursor-pointer">✕</button>
+            <button onclick="endFakeCall()" class="bg-emerald-600 hover:bg-emerald-500 text-white w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-xl cursor-pointer">📞</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        // Load Contacts on startup
+        async function loadContacts() {
+            try {
+                const res = await fetch(`${API_URL}/contacts`);
+                const data = await res.json();
+                const list = document.getElementById('contactList');
+                list.innerHTML = '';
+                
+                data.contacts.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = "bg-slate-950/60 border border-slate-800/80 p-2.5 rounded-xl flex justify-between items-center text-slate-200";
+                    li.innerHTML = `<span><b>${c.name}</b>: ${c.phone}</span> <button onclick="deleteContact(${c.id})" class="text-rose-400 hover:text-rose-300 text-[10px] cursor-pointer font-bold">REMOVE</button>`;
+                    list.appendChild(li);
+                });
+            } catch (e) {
+                console.log("Backend offline or loading locally.");
+            }
+        }
+
+        async function addContact() {
+            const name = document.getElementById('contactName').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            if (!name || !phone) return alert("Please fill both name and phone.");
+
+            await fetch(`${API_URL}/contacts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactPhone').value = '';
+            loadContacts();
+        }
+
+        async function deleteContact(id) {
+            await fetch(`${API_URL}/contacts/${id}`, { method: 'DELETE' });
+            loadContacts();
+        }
+
+        // SOS Panic Broadcast
+        function triggerEmergencySOS() {
+            const status = document.getElementById('sosStatus');
+            status.innerText = "Acquiring high-accuracy GPS coordinates...";
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
+                    const mapUrl = `https://maps.google.com/?q=${lat},${lon}`;
+                    
+                    status.innerHTML = `<span class="text-emerald-400 font-bold">SOS Broadcasted! Location: <a href="${mapUrl}" target="_blank" class="underline">View Map</a></span>`;
+
+                    // Log to backend database
+                    await fetch(`${API_URL}/alerts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ location: `${lat}, ${lon}`, status: 'ACTIVE_PANIC' })
+                    });
+
+                    alert(`PANIC ALERT GENERATED!\nCoordinates: ${lat}, ${lon}\nAlert sent to backend server log.`);
+                }, () => {
+                    status.innerText = "GPS Access Denied. Please enable location permissions.";
+                });
+            } else {
+                status.innerText = "Geolocation is not supported by your browser.";
+            }
+        }
+
+        // Fake Call Trigger
+        function triggerFakeCall() {
+            document.getElementById('fakeCallScreen').classList.remove('hidden');
+        }
+
+        function endFakeCall() {
+            document.getElementById('fakeCallScreen').classList.add('hidden');
+        }
+
+        // Clipboard GPS Share
+        function shareLiveLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    const link = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    navigator.clipboard.writeText(link);
+                    alert("Live map location link copied to clipboard!");
+                });
+            } else {
+                alert("Geolocation not available.");
+            }
+        }
+
+        // Siren Generator using Web Audio API
+        function triggerSirens() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = ctx.createOscillator();
+            let gain = ctx.createGain();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            osc.frequency.linearRampToValueAtTime(1200, ctx.currentTime + 0.5);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start();
+            alert("Security Siren Active. Tap OK to stop.");
+            osc.stop();
+        }
+
+        // Initialize on load
+        loadContacts();
+    </script>
+</body>
+</html>
