@@ -1,12 +1,15 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static('public'));
+
+// Serve static frontend files from the 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize Database
 const db = new sqlite3.Database('./safesphere.db', (err) => {
@@ -84,5 +87,5 @@ app.post('/api/incidents', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`SafeSphere advanced server running at http://localhost:${PORT}`);
+    console.log(`SafeSphere server running at http://localhost:${PORT}`);
 });
